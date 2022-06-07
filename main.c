@@ -22,20 +22,24 @@ int main(int argc, char *argv[]) {
         rewind(file);
         char *fileContent = (char*)malloc((filesize+1)*sizeof(char));
 
+        if (fileContent == NULL) {
+            printf("Problem z alokacją pamięci!");
+            getchar();
+            return 1;
+        }
+
         if (file == NULL) {
+            free(fileContent);
             printf("Nie znaleziono pliku!");
             getchar();
-            return 0;
+            return 2;
         }
 
         for(int i = 0; i < filesize; i++) {
             fread(fileContent+i, 1, 1, file);
-            //printf("%u ", fileContent[i]);
         }
 
         fclose(file);
-
-
 
         printf("Rozmiar pliku %.2fMB\n", (float)((float)filesize/(float)1000000));
 
@@ -65,6 +69,13 @@ int main(int argc, char *argv[]) {
 
         FILE *negativeFile = fopen("negative.bmp", "wb");
 
+        if (negativeFile == NULL) {
+            printf("Problem z utworzeniem pliku!");
+            free(fileContent);
+            getchar();
+            return 3;
+        }
+
         for (int i=0; i<filesize; i++) {
             if (i < offset) {
                 fputc(fileContent[i], negativeFile);
@@ -77,9 +88,12 @@ int main(int argc, char *argv[]) {
         fclose(negativeFile);
         printf("Zapisano negatyw do pliku \"negative.bmp\"");
 
+        free(fileContent);
+
     } else {
         printf("Podaj jeden parametr - sciezke do pliku!");
         getchar();
+        return 4;
     }
 
     return 0;
